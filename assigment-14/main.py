@@ -1,1 +1,0 @@
-print("assigment-14/main.py")

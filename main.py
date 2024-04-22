@@ -1,1 +1,1 @@
-print("Hello world", "I am a python program", "I am running on a server")
+print("Hello world")
