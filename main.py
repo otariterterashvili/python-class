@@ -1,39 +1,68 @@
-from balance import topup_balance
+import csv
 
-USER_NOT_FOUND = "USER_NOT_FOUND"
-NOT_AUTH = "NOT_AUTHORIZED"
+class FileHandler:
+    def open(self, file_path):
+        print("All other file handler", file_path)
 
-db = [
-    {"email": "oto@gmail.com", "password": "oto12345"}
-]
+class TextFileHandler(FileHandler):
+    def open(self, file_path):
+        with open(file_path, 'r') as file:
+            content = file.readline()
+            print(content)
 
-sign_in_attempts = 0
+            file.close()
+class CSVFileHandler(FileHandler):
+    def open(self, file_path):
+        with open(file_path, 'r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                print(row)
+            
+            file.close()
 
-def find_user_with_email(email):
-    for user in db:        
-        if user.get("email") == email:
-            return user
+def files_reader(*args):
+    for file in args:
+        file_handler = FileHandler()
+
+        if file.endswith(".txt"):
+            file_handler = TextFileHandler()
+        elif file.endswith(".csv"):
+            file_handler = CSVFileHandler()
         
-    raise Exception(USER_NOT_FOUND)
+        file_handler.open(file)
 
-def sign_in_user(inputPassword, currentPassword):
-    if inputPassword == currentPassword:
-        return "TOKEN"
-    
-    raise Exception(NOT_AUTH)
 
-while True:
-    email = input("Enter email: ")
-    password = input("Enter password: ")
-    
-    try:
-        user = find_user_with_email(email)
-        token = sign_in_user(user.get("password"), password)
+# files_reader('temp.txt', 'pandas.csv', 'vip_customers.csv')
 
-    except Exception as e:
-        print("e", e)
+class PaymentProcessor():
+    def __init__(self, amount):
+        self.amount = amount
+    def pay(self):
+        print("default payment method")
+
+
+class TBCPaymentProcessor(PaymentProcessor):
+    def pay(self):
+        print("TBC payment method amount ->", self.amount)
+
+class BOGPaymentProcessor(PaymentProcessor):
+    def pay(self):
+        print("BOG payment method amount ->", self.amount)
+
+
+order_bucket = []
+
+order_bucket.append(TBCPaymentProcessor(10.5))
+order_bucket.append(BOGPaymentProcessor(20.5))
+order_bucket.append(BOGPaymentProcessor(12.80))
+
+order_bucket.append(BOGPaymentProcessor(11.70))
+order_bucket.append(TBCPaymentProcessor(9.80))
+order_bucket.append(TBCPaymentProcessor(10.30))
+
+
+for order in order_bucket:
+    order.pay()
+
+
     
-    finally:
-        sign_in_attempts +=1
-    
-    print("sign_in_attempts: ", sign_in_attempts)
